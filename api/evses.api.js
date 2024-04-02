@@ -1,8 +1,14 @@
-const { AccessTokenVerifier } = require("../middlewares/TokenMiddleware"); // Remove this if unused
+const TokenMiddleware = require("../middlewares/TokenMiddleware");
+const {
+	ROLES,
+	RoleManagementMiddleware,
+} = require("../middlewares/RoleManagementMiddleware");
 const { validationResult, body } = require("express-validator");
 
 const logger = require("../config/winston");
+const EVSEService = require("../services/EVSEService");
 
+const { HttpUnprocessableEntity } = require("../utils/HttpError");
 // Import your SERVICE HERE
 // Import MISC HERE
 
@@ -10,6 +16,14 @@ const logger = require("../config/winston");
  * @param {import('express').Express} app
  */
 module.exports = (app) => {
+	/**
+	 * import your service here
+	 * import your middlewares here
+	 */
+	const service = new EVSEService();
+	const tokenMiddleware = new TokenMiddleware();
+	const roleMiddleware = new RoleManagementMiddleware();
+
 	/**
 	 * This function will be used by the express-validator for input validation,
 	 * and to be attached to APIs middleware.
@@ -28,8 +42,11 @@ module.exports = (app) => {
 	}
 
 	app.get(
-		"your_path",
-		[AccessTokenVerifier],
+		"/admin_evses/api/v1/evses",
+		[
+			tokenMiddleware.AccessTokenVerifier(),
+			roleMiddleware.CheckRole(ROLES.ADMIN),
+		],
 
 		/**
 		 * @param {import('express').Request} req
@@ -37,24 +54,28 @@ module.exports = (app) => {
 		 */
 		async (req, res) => {
 			try {
+				const { limit, offset } = req.query;
+
 				logger.info({
-					NAME_THIS_LOG_REQUEST: {
-						// your call what data you need to log
-					},
+					GET_EVSES_REQUEST: { limit, offset },
 				});
 
-				/** Your logic here */
+				const result = await service.GetEVSES({
+					limit: parseInt(limit, 10) || 10,
+					offset: parseInt(offset, 10) || 0,
+				});
+
 				logger.info({
-					NAME_THIS_LOG_RESPONSE: {
-						// your call what data you need to log
+					GET_EVSES_RESPONSE: {
+						message: "SUCCESS",
 					},
 				});
 				return res
 					.status(200)
-					.json({ status: 200, data: [], message: "Success" });
+					.json({ status: 200, data: result, message: "Success" });
 			} catch (err) {
 				logger.error({
-					GET_CPOS_ERROR: {
+					GET_EVSES_ERROR: {
 						err,
 						message: err.message,
 					},
@@ -67,4 +88,3 @@ module.exports = (app) => {
 			}
 		}
 	);
-};
