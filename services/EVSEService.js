@@ -1,6 +1,7 @@
 const EVSERepository = require("../repository/EVSERepository");
 const { HttpBadRequest } = require("../utils/HttpError");
 
+const { v4: uuidv4 } = require("uuid");
 module.exports = class EVSEService {
 	#repository;
 
@@ -20,6 +21,14 @@ module.exports = class EVSEService {
 			);
 
 		const result = await this.#repository.GetEVSES({ limit, offset });
+
+		return result;
+	}
+
+	async RegisterEVSE(data) {
+		const uid = uuidv4();
+
+		const result = await this.#repository.RegisterEVSE({ uid, ...data });
 
 		return result;
 	}
