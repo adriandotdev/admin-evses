@@ -30,6 +30,30 @@ module.exports = class EVSEService {
 
 		const result = await this.#repository.RegisterEVSE({ uid, ...data });
 
-		return result;
+		const status = result[0][0].STATUS;
+
+		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
+
+		return status;
+	}
+
+	async BindEVSE(data) {
+		const result = await this.#repository.BindEVSE(data);
+
+		const status = result[0][0].STATUS;
+
+		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
+
+		return status;
+	}
+
+	async UnbindEVSE(data) {
+		const result = await this.#repository.UnbindEVSE(data);
+
+		const status = result[0][0].STATUS;
+
+		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
+
+		return status;
 	}
 };

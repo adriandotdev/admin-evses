@@ -61,4 +61,32 @@ module.exports = class EVSERepository {
 			);
 		});
 	}
+
+	BindEVSE(data) {
+		const QUERY = `CALL WEB_ADMIN_BIND_EVSE(?,?)`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, [data.location_id, data.evse_uid], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
+
+	UnbindEVSE(data) {
+		const QUERY = `CALL WEB_ADMIN_UNBIND_EVSE(?,?)`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, [data.location_id, data.evse_uid], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
 };

@@ -8,7 +8,10 @@ const { validationResult, body } = require("express-validator");
 const logger = require("../config/winston");
 const EVSEService = require("../services/EVSEService");
 
-const { HttpUnprocessableEntity } = require("../utils/HttpError");
+const {
+	HttpUnprocessableEntity,
+	HttpBadRequest,
+} = require("../utils/HttpError");
 // Import your SERVICE HERE
 // Import MISC HERE
 
@@ -145,6 +148,66 @@ module.exports = (app) => {
 			} catch (err) {
 				logger.error({
 					REGISTER_EVSE_ERROR: {
+						err,
+						message: err.message,
+					},
+				});
+				return res.status(err.status || 500).json({
+					status: err.status || 500,
+					data: err.data || [],
+					message: err.message || "Internal Server Error",
+				});
+			}
+		}
+	);
+
+	app.patch(
+		"/admin_evses/api/v1/evses/:action/:location_id/:evse_uid",
+		[
+			tokenMiddleware.AccessTokenVerifier(),
+			roleMiddleware.CheckRole(ROLES.ADMIN),
+		],
+
+		/**
+		 * @param {import('express').Request} req
+		 * @param {import('express').Response} res
+		 */
+		async (req, res) => {
+			try {
+				const { action, location_id, evse_uid } = req.params;
+				const VALID_ACTIONS = ["bind", "unbind"];
+
+				logger.info({
+					BIND_OR_UNBIND_EVSE_REQUEST: { action, location_id, evse_uid },
+				});
+
+				if (!VALID_ACTIONS.includes(action))
+					throw new HttpBadRequest(
+						"Invalid action. Valid actions are: bind or unbind"
+					);
+
+				let result = undefined;
+
+				if (action === "bind") {
+					// When action is bind.
+					result = await service.BindEVSE({ location_id, evse_uid });
+				} else {
+					// When action is unbind.
+					result = await service.UnbindEVSE({ location_id, evse_uid });
+				}
+
+				logger.info({
+					BIND_OR_UNBIND_EVSE_RESPONSE: {
+						message: "SUCCESS",
+					},
+				});
+
+				return res
+					.status(200)
+					.json({ status: 200, data: result, message: "Success" });
+			} catch (err) {
+				logger.error({
+					BIND_OR_UNBIND_EVSE_ERROR: {
 						err,
 						message: err.message,
 					},
