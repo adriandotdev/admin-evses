@@ -118,6 +118,42 @@ module.exports = (app) => {
 			body("meter_serial_number")
 				.notEmpty()
 				.withMessage("Missing required property: meter_serial_number"),
+			body("connectors")
+				.isArray()
+				.withMessage("Invalid data type: connectors must be in array type")
+				.custom((value) => value.length > 0)
+				.withMessage("Please provide at least one connector"),
+			body("connectors.*.standard")
+				.notEmpty()
+				.withMessage(
+					"Missing required property: standard. (E.g TYPE_2, CHADEMO)"
+				),
+			body("connectors.*.format")
+				.notEmpty()
+				.withMessage("Missing required property: format. (E.g SOCKET)"),
+			body("connectors.*.power_type")
+				.notEmpty()
+				.withMessage("Missing required property: power_type. (E.g AC, DC)"),
+			body("connectors.*.max_voltage")
+				.notEmpty()
+				.withMessage("Missing required property: max_voltage")
+				.isNumeric()
+				.withMessage("Invalid data type: max_voltage must be a number."),
+			body("connectors.*.max_amperage")
+				.notEmpty()
+				.withMessage("Missing required property: max_amperage")
+				.isNumeric()
+				.withMessage("Invalid data type: max_amperage must be a number."),
+			body("connectors.*.max_electric_power")
+				.notEmpty()
+				.withMessage("Missing required property: max_electric_power")
+				.isNumeric()
+				.withMessage("Invalid data type: max_electric_power must be a number."),
+			body("connectors.*.rate_setting")
+				.notEmpty()
+				.withMessage("Missing required property: rate_setting")
+				.isNumeric()
+				.withMessage("Invalid data type: rate_setting must be a number."),
 			body("location_id").optional(),
 		],
 		/**

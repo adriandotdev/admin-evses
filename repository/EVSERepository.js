@@ -36,29 +36,38 @@ module.exports = class EVSERepository {
         `;
 
 		return new Promise((resolve, reject) => {
-			mysql.query(
-				QUERY,
-				[
-					data.uid,
-					data.model,
-					data.vendor,
-					data.serial_number,
-					data.box_serial_number,
-					data.firmware_version,
-					data.iccid,
-					data.imsi,
-					data.meter_type,
-					data.meter_serial_number,
-					data.location_id || null,
-				],
-				(err, result) => {
+			mysql.getConnection((err, connection) => {
+				connection.beginTransaction((err) => {
 					if (err) {
-						reject(err);
+						reject({ err, connection });
+						return;
 					}
 
-					resolve(result);
-				}
-			);
+					connection.query(
+						QUERY,
+						[
+							data.uid,
+							data.model,
+							data.vendor,
+							data.serial_number,
+							data.box_serial_number,
+							data.firmware_version,
+							data.iccid,
+							data.imsi,
+							data.meter_type,
+							data.meter_serial_number,
+							data.location_id || null,
+						],
+						(err, result) => {
+							if (err) {
+								reject({ err, connection });
+							}
+
+							resolve({ result, connection });
+						}
+					);
+				});
+			});
 		});
 	}
 
