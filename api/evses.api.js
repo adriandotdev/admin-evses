@@ -48,7 +48,11 @@ module.exports = (app) => {
 		"/admin_evses/api/v1/evses",
 		[
 			tokenMiddleware.AccessTokenVerifier(),
-			roleMiddleware.CheckRole(ROLES.ADMIN),
+			roleMiddleware.CheckRole(
+				ROLES.ADMIN,
+				ROLES.ADMIN_NOC,
+				ROLES.ADMIN_MARKETING
+			),
 		],
 
 		/**
@@ -96,7 +100,11 @@ module.exports = (app) => {
 		"/admin_evses/api/v1/evses",
 		[
 			tokenMiddleware.AccessTokenVerifier(),
-			roleMiddleware.CheckRole(ROLES.ADMIN),
+			roleMiddleware.CheckRole(
+				ROLES.ADMIN,
+				ROLES.ADMIN_NOC,
+				ROLES.ADMIN_MARKETING
+			),
 			body("model").notEmpty().withMessage("Missing required property: model"),
 			body("vendor")
 				.notEmpty()
@@ -201,7 +209,11 @@ module.exports = (app) => {
 		"/admin_evses/api/v1/evses/:action/:location_id/:evse_uid",
 		[
 			tokenMiddleware.AccessTokenVerifier(),
-			roleMiddleware.CheckRole(ROLES.ADMIN),
+			roleMiddleware.CheckRole(
+				ROLES.ADMIN,
+				ROLES.ADMIN_NOC,
+				ROLES.ADMIN_MARKETING
+			),
 		],
 
 		/**
