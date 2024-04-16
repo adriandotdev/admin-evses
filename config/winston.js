@@ -26,13 +26,13 @@ addColors(colors);
 const options = {
 	info: {
 		level: "info",
-		filename: "nspocpi-%DATE%.log",
+		filename: "admin_evses-%DATE%.log",
 		dirname:
 			path.dirname(__dirname) +
 			path.sep +
 			"logs" +
 			path.sep +
-			"nspocpi" +
+			"admin_evses" +
 			path.sep,
 		handleExceptions: true,
 		json: true,
@@ -49,7 +49,7 @@ const options = {
 			path.sep +
 			"logs" +
 			path.sep +
-			"nspocpi" +
+			"admin_evses" +
 			path.sep,
 		handleExceptions: true,
 		json: true,

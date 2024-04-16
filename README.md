@@ -148,3 +148,5 @@ Bind or Unbind EVSE to location.
 - **EVSE_UID_DOES_NOT_EXISTS**
 
 - **EVSE_ALREADY_BINDED**
+
+---
