@@ -98,4 +98,61 @@ module.exports = class EVSERepository {
 			});
 		});
 	}
+
+	AddEVSEPaymentTypes(paymentTypes, connection) {
+		const QUERY = `INSERT INTO evse_payment_types (evse_uid, payment_type_id)
+		VALUES ?`;
+
+		return new Promise((resolve, reject) => {
+			connection.query(QUERY, [paymentTypes], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
+
+	AddEVSECapabilities(capabilities, connection) {
+		const QUERY = `INSERT INTO evse_capabilities (capability_id, evse_uid) VALUES ?`;
+
+		return new Promise((resolve, reject) => {
+			connection.query(QUERY, [capabilities], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
+
+	GetDefaultPaymentTypes() {
+		const QUERY = `SELECT * FROM payment_types`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
+
+	GetDefaultCapabilities() {
+		const QUERY = `SELECT * FROM capabilities`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
 };
