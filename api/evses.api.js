@@ -162,6 +162,12 @@ module.exports = (app) => {
 				.withMessage("Missing required property: rate_setting")
 				.isNumeric()
 				.withMessage("Invalid data type: rate_setting must be a number."),
+			body("payment_types")
+				.isArray()
+				.withMessage("Property: payment_types must be in type of Array"),
+			body("capabilities")
+				.isArray()
+				.withMessage("Property: capabilities must be in type of Array"),
 			body("location_id").optional(),
 		],
 		/**
@@ -256,6 +262,43 @@ module.exports = (app) => {
 			} catch (err) {
 				logger.error({
 					BIND_OR_UNBIND_EVSE_ERROR: {
+						err,
+						message: err.message,
+					},
+				});
+				return res.status(err.status || 500).json({
+					status: err.status || 500,
+					data: err.data || [],
+					message: err.message || "Internal Server Error",
+				});
+			}
+		}
+	);
+
+	app.get(
+		"/admin_evses/api/v1/evses/data/defaults",
+		[tokenMiddleware.BasicTokenVerifier()],
+
+		/**
+		 * @param {import('express').Request} req
+		 * @param {import('express').Response} res
+		 */
+		async (req, res) => {
+			try {
+				logger.info({
+					GET_DEFAULT_DATA_REQUEST: {
+						message: "Success",
+					},
+				});
+
+				const result = await service.GetDefaultData();
+
+				return res
+					.status(200)
+					.json({ status: 200, data: result, message: "Success" });
+			} catch (err) {
+				logger.error({
+					GET_DEFAULT_DATA_ERROR: {
 						err,
 						message: err.message,
 					},

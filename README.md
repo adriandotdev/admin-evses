@@ -54,14 +54,23 @@ Registers new EVSEs
 	"party_id": "PNC",
 	"model": "ChargeMaster Plus",
 	"vendor": "VoltCharge Technologies",
-	"serial_number": "EVCHRG999999999",
-	"box_serial_number": "BOX999999999",
-	"firmware_version": "v1.9.8",
+	"serial_number": "EVCHRG123456789",
+	"box_serial_number": "BOX987654321",
+	"firmware_version": "v2.1.0",
 	"iccid": "89014103211118510777",
 	"imsi": "310260000000005",
 	"meter_type": "AC",
-	"meter_serial_number": "MTRAC987654321",
+	"meter_serial_number": "MTRAC123456789",
 	"connectors": [
+		{
+			"standard": "TYPE_2",
+			"format": "SOCKET",
+			"power_type": "AC",
+			"max_voltage": 210,
+			"max_amperage": 140,
+			"max_electric_power": 45,
+			"rate_setting": 7
+		},
 		{
 			"standard": "TYPE_2",
 			"format": "SOCKET",
@@ -72,7 +81,9 @@ Registers new EVSEs
 			"rate_setting": 7
 		}
 	],
-	"location_id": 56
+	"payment_types": [1, 2], // Provide only payment id
+	"capabilities": [1, 2, 3], // Provide only capability id
+	"location_id": 0
 }
 ```
 

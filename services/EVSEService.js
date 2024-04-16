@@ -52,13 +52,34 @@ module.exports = class EVSEService {
 				connection
 			);
 
-			const evseTimeslotResult = await this.#connectorRepository.AddTimeslots(
+			await this.#connectorRepository.AddTimeslots(
 				uid,
 				connectorResult.insertId,
 				7,
 				data.connectors.length,
 				connection
 			);
+
+			const newPaymentTypes = data.payment_types.map((payment_type) => [
+				uid,
+				payment_type,
+			]);
+
+			await this.#evseRepository.AddEVSEPaymentTypes(
+				newPaymentTypes,
+				connection
+			);
+
+			const newCapabilities = data.capabilities.map((capability) => [
+				capability,
+				uid,
+			]);
+
+			await this.#evseRepository.AddEVSECapabilities(
+				newCapabilities,
+				connection
+			);
+
 			conn.commit();
 			return status;
 		} catch (err) {
@@ -87,5 +108,13 @@ module.exports = class EVSEService {
 		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
 
 		return status;
+	}
+
+	async GetDefaultData() {
+		const payment_types = await this.#evseRepository.GetDefaultPaymentTypes();
+
+		const capabilities = await this.#evseRepository.GetDefaultCapabilities();
+
+		return { payment_types, capabilities };
 	}
 };
