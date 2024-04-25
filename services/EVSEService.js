@@ -54,7 +54,7 @@ module.exports = class EVSEService {
 
 			await this.#connectorRepository.AddTimeslots(
 				uid,
-				connectorResult.insertId,
+				1,
 				7,
 				data.connectors.length,
 				connection

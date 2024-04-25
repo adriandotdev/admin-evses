@@ -9,6 +9,7 @@ module.exports = class ConnectorRepository {
 		const QUERY = `
             INSERT INTO evse_connectors (
                 evse_uid,
+				connector_id,
                 standard,
                 format,
                 power_type_id,
@@ -24,8 +25,9 @@ module.exports = class ConnectorRepository {
             VALUES ?
         `;
 
-		let values = data.map((connector) => [
+		let values = data.map((connector, index) => [
 			uid,
+			index + 1,
 			connector.standard,
 			connector.format,
 			connector.power_type,
