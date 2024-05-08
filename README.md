@@ -61,6 +61,7 @@ Registers new EVSEs
 	"imsi": "310260000000005",
 	"meter_type": "AC",
 	"meter_serial_number": "MTRAC123456789",
+	"kwh": 7, // Valid kwhs are 7, 22, 60, and 80
 	"connectors": [
 		{
 			"standard": "TYPE_2",
