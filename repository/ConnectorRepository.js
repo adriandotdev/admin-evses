@@ -67,10 +67,36 @@ module.exports = class ConnectorRepository {
 		);
 		let values = [];
 
-		// Default is 7 kwh which is setting timeslot id 1 to 3.
-		for (let connectorID of connectorIDs) {
-			for (let j = 1; j <= 3; j++) {
-				values.push([uid, connectorID, j, "OFFLINE"]);
+		// For 7kwh charger timeslots
+		if (kwh === 7) {
+			for (let connectorID of connectorIDs) {
+				for (let j = 1; j <= 3; j++) {
+					values.push([uid, connectorID, j, "ONLINE"]);
+				}
+			}
+		}
+		// For 22kwh charger timeslots
+		else if (kwh === 22) {
+			for (let connectorID of connectorIDs) {
+				for (let j = 4; j <= 11; j++) {
+					values.push([uid, connectorID, j, "ONLINE"]);
+				}
+			}
+		}
+		// For 60kwh charger timeslots
+		else if (kwh === 60) {
+			for (let connectorID of connectorIDs) {
+				for (let j = 12; j <= 19; j++) {
+					values.push([uid, connectorID, j, "ONLINE"]);
+				}
+			}
+		}
+		// For 80kwh charger timeslots
+		else if (kwh === 80) {
+			for (let connectorID of connectorIDs) {
+				for (let j = 20; j <= 27; j++) {
+					values.push([uid, connectorID, j, "ONLINE"]);
+				}
 			}
 		}
 
