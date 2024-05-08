@@ -126,6 +126,7 @@ module.exports = (app) => {
 			body("meter_serial_number")
 				.notEmpty()
 				.withMessage("Missing required property: meter_serial_number"),
+			body("kwh").notEmpty().withMessage("Missing required property: kwh"),
 			body("connectors")
 				.isArray()
 				.withMessage("Invalid data type: connectors must be in array type")

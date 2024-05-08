@@ -55,7 +55,7 @@ module.exports = class EVSEService {
 			await this.#connectorRepository.AddTimeslots(
 				uid,
 				1,
-				7,
+				data.kwh,
 				data.connectors.length,
 				connection
 			);
