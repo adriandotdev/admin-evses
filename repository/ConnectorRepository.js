@@ -53,7 +53,20 @@ module.exports = class ConnectorRepository {
 	}
 
 	AddTimeslots(uid, lastInsertID, kwh, connectorsCount, connection) {
-		console.log(uid, lastInsertID, kwh, connectorsCount);
+		/**
+		 * @function
+		 * @description A function to generate list of timeslots for each connector
+		 * @param {Object[]} connectorIDs List of connectors
+		 * @param {Number} startingID Starting index from the evse_timeslots table
+		 * @param {Number} endingID Ending index from the evse_timeslots table
+		 */
+		function GenerateTimeslots(connectorIDs, startingID, endingID) {
+			for (let connectorID of connectorIDs) {
+				for (let j = startingID; j <= endingID; j++) {
+					values.push([uid, connectorID, j, "ONLINE"]);
+				}
+			}
+		}
 
 		const QUERY = `
             INSERT INTO 
@@ -67,37 +80,19 @@ module.exports = class ConnectorRepository {
 		);
 		let values = [];
 
-		// For 7kwh charger timeslots
-		if (kwh === 7) {
-			for (let connectorID of connectorIDs) {
-				for (let j = 1; j <= 3; j++) {
-					values.push([uid, connectorID, j, "ONLINE"]);
-				}
-			}
-		}
-		// For 22kwh charger timeslots
-		else if (kwh === 22) {
-			for (let connectorID of connectorIDs) {
-				for (let j = 4; j <= 11; j++) {
-					values.push([uid, connectorID, j, "ONLINE"]);
-				}
-			}
-		}
-		// For 60kwh charger timeslots
-		else if (kwh === 60) {
-			for (let connectorID of connectorIDs) {
-				for (let j = 12; j <= 19; j++) {
-					values.push([uid, connectorID, j, "ONLINE"]);
-				}
-			}
-		}
-		// For 80kwh charger timeslots
-		else if (kwh === 80) {
-			for (let connectorID of connectorIDs) {
-				for (let j = 20; j <= 27; j++) {
-					values.push([uid, connectorID, j, "ONLINE"]);
-				}
-			}
+		switch (kwh) {
+			case 7:
+				GenerateTimeslots(connectorIDs, 1, 3);
+				break;
+			case 22:
+				GenerateTimeslots(connectorIDs, 4, 11);
+				break;
+			case 60:
+				GenerateTimeslots(connectorIDs, 12, 19);
+				break;
+			case 80:
+				GenerateTimeslots(connectorIDs, 20, 27);
+				break;
 		}
 
 		return new Promise((resolve, reject) => {
