@@ -27,13 +27,7 @@ const options = {
 	info: {
 		level: "info",
 		filename: "admin_evses-%DATE%.log",
-		dirname:
-			path.dirname(__dirname) +
-			path.sep +
-			"logs" +
-			path.sep +
-			"admin_evses" +
-			path.sep,
+		dirname: path.join(__dirname, "..", "logs", "admin_evses"),
 		handleExceptions: true,
 		json: true,
 		colorize: true,
@@ -43,14 +37,8 @@ const options = {
 	},
 	error: {
 		level: "error",
-		filename: "nspocpi-%DATE%.log",
-		dirname:
-			path.dirname(__dirname) +
-			path.sep +
-			"logs" +
-			path.sep +
-			"admin_evses" +
-			path.sep,
+		filename: "admin_evses-%DATE%.log",
+		dirname: path.join(__dirname, "..", "logs", "admin_evses"),
 		handleExceptions: true,
 		json: true,
 		colorize: true,
