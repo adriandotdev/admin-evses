@@ -287,6 +287,58 @@ module.exports = (app) => {
 		}
 	);
 
+	app.get(
+		"/admin_evses/api/v1/evses/search/:serial_number/:limit/:offset",
+		[
+			tokenMiddleware.AccessTokenVerifier(),
+			roleMiddleware.CheckRole(
+				ROLES.ADMIN,
+				ROLES.ADMIN_NOC,
+				ROLES.ADMIN_MARKETING
+			),
+		],
+
+		/**
+		 * @param {import('express').Request} req
+		 * @param {import('express').Response} res
+		 */
+		async (req, res, next) => {
+			try {
+				const { serial_number, limit, offset } = req.params;
+
+				logger.info({
+					SEARCH_EVSE_BY_SERIAL_NUMBER_REQUEST: {
+						data: {
+							serial_number,
+							limit,
+							offset,
+						},
+						message: "SUCCESS",
+					},
+				});
+
+				const result = await service.SearchEVSEBySerialNumber(
+					serial_number,
+					limit,
+					offset
+				);
+
+				logger.info({
+					SEARCH_EVSE_BY_SERIAL_NUMBER_RESPONSE: {
+						message: "SUCCESS",
+					},
+				});
+
+				return res
+					.status(200)
+					.json({ status: 200, data: result, message: "Success" });
+			} catch (err) {
+				req.error_name = "SEARCH_EVSE_BY_SERIAL_NUMBER_ERROR";
+				next(err);
+			}
+		}
+	);
+
 	app.use((err, req, res, next) => {
 		logger.error({
 			API_REQUEST_ERROR: {

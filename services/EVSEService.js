@@ -117,4 +117,14 @@ module.exports = class EVSEService {
 
 		return { payment_types, capabilities };
 	}
+
+	async SearchEVSEBySerialNumber(serialNumber, limit, offset) {
+		const result = await this.#evseRepository.SearchEVSEBySerialNumber(
+			serialNumber,
+			limit,
+			offset
+		);
+
+		return result;
+	}
 };
