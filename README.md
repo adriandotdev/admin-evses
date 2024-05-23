@@ -151,3 +151,77 @@ Bind or Unbind EVSE to location.
 - **EVSE_ALREADY_BINDED**
 
 ---
+
+### Default Data - `GET /api/v1/evses/data/defaults`
+
+**Description**
+
+Retrieve list of data for registering EVSE
+
+**Authorization: Basic TOKEN**
+
+**Response**
+
+```json
+{
+	"status": 200,
+	"data": {
+		"payment_types": [],
+		"capabilities": []
+	},
+	"message": "Success"
+}
+```
+
+---
+
+### Search EVSE by Serial Number - `GET /api/v1/evses/search/:serial_number/:limit/:offset`
+
+**Description**
+
+Search EVSE by Serial Number
+
+**Authorization: Bearer TOKEN**
+
+**Parameters**
+
+- **serial_number** - EVSE's serial number
+- **limit** - Number of EVSE to return
+- **offset** - Starting row to return
+
+**Response**
+
+```json
+{
+	"status": 200,
+	"data": [
+		{
+			"uid": "0f02b609-0337-434e-8487-25308f13e54b",
+			"evse_code": "NCR0000000061",
+			"evse_id": "PHPNCE0000000061",
+			"model": "ChargeMaster Plus",
+			"vendor": "VoltCharge Technologies",
+			"serial_number": "EVCHRG123456789",
+			"box_serial_number": "BOX987654321",
+			"firmware_version": "v2.1.0",
+			"iccid": "89014103211118510777",
+			"imsi": "310260000000005",
+			"cpo_location_id": 1
+		},
+		{
+			"uid": "ffa8ed36-8b86-47ab-9ddd-77cec4988a43",
+			"evse_code": "NCR0000000066",
+			"evse_id": "PHPNCE0000000066",
+			"model": "ChargeMaster Plus",
+			"vendor": "VoltCharge Technologies",
+			"serial_number": "EVCHRG123456789",
+			"box_serial_number": "BOX987654321",
+			"firmware_version": "v2.1.0",
+			"iccid": "89014103211118510777",
+			"imsi": "310260000000005",
+			"cpo_location_id": 1
+		}
+	],
+	"message": "Success"
+}
+```

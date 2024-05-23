@@ -80,34 +80,82 @@ module.exports = class EVSEService {
 				connection
 			);
 
+			// Audit trail
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: "REGISTER new EVSE",
+				remarks: "success",
+			});
 			conn.commit();
 			return status;
 		} catch (err) {
 			if (conn) conn.rollback();
-			throw new HttpInternalServerError(err.message, []);
+
+			// Audit trail
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: "ATTEMPT to REGISTER new EVSE",
+				remarks: "failed",
+			});
+			throw err;
 		} finally {
 			if (conn) conn.release();
 		}
 	}
 
 	async BindEVSE(data) {
-		const result = await this.#evseRepository.BindEVSE(data);
+		try {
+			const result = await this.#evseRepository.BindEVSE(data);
 
-		const status = result[0][0].STATUS;
+			const status = result[0][0].STATUS;
 
-		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
+			if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
 
-		return status;
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: `BIND EVSE with ID of ${data.evse_uid} to Location with ID of ${data.location_id}`,
+				remarks: "success",
+			});
+
+			return status;
+		} catch (err) {
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: `ATTEMPT to BIND EVSE with ID of ${data.evse_uid} to Location with ID of ${data.location_id}`,
+				remarks: "failed",
+			});
+			throw err;
+		}
 	}
 
 	async UnbindEVSE(data) {
-		const result = await this.#evseRepository.UnbindEVSE(data);
+		try {
+			const result = await this.#evseRepository.UnbindEVSE(data);
 
-		const status = result[0][0].STATUS;
+			const status = result[0][0].STATUS;
 
-		if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
+			if (status !== "SUCCESS") throw new HttpBadRequest(status, []);
 
-		return status;
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: `UNBIND EVSE with ID of ${data.evse_uid} from Location with ID of ${data.location_id}`,
+				remarks: "success",
+			});
+			return status;
+		} catch (err) {
+			await this.#evseRepository.AuditTrail({
+				admin_id: data.admin_id,
+				cpo_id: null,
+				action: `ATTEMPT to UNBIND EVSE with ID of ${data.evse_uid} from Location with ID of ${data.location_id}`,
+				remarks: "failed",
+			});
+			throw err;
+		}
 	}
 
 	async GetDefaultData() {

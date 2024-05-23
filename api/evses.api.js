@@ -179,7 +179,10 @@ module.exports = (app) => {
 					},
 				});
 
-				const result = await service.RegisterEVSE({ ...req.body });
+				const result = await service.RegisterEVSE({
+					...req.body,
+					admin_id: req.id,
+				});
 
 				logger.info({
 					REGISTER_EVSE_RESPONSE: {
@@ -237,10 +240,18 @@ module.exports = (app) => {
 
 				if (action === "bind") {
 					// When action is bind.
-					result = await service.BindEVSE({ location_id, evse_uid });
+					result = await service.BindEVSE({
+						location_id,
+						evse_uid,
+						admin_id: req.id,
+					});
 				} else {
 					// When action is unbind.
-					result = await service.UnbindEVSE({ location_id, evse_uid });
+					result = await service.UnbindEVSE({
+						location_id,
+						evse_uid,
+						admin_id: req.id,
+					});
 				}
 
 				logger.info({
