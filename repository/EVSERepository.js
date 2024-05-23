@@ -16,6 +16,7 @@ module.exports = class EVSERepository {
                 imsi,
                 cpo_location_id
             FROM evse
+			ORDER BY cpo_location_id IS NULL, cpo_location_id ASC
             LIMIT ? OFFSET ?
         `;
 
