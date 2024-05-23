@@ -179,7 +179,10 @@ module.exports = (app) => {
 					},
 				});
 
-				const result = await service.RegisterEVSE({ ...req.body });
+				const result = await service.RegisterEVSE({
+					...req.body,
+					admin_id: req.id,
+				});
 
 				logger.info({
 					REGISTER_EVSE_RESPONSE: {
@@ -237,10 +240,18 @@ module.exports = (app) => {
 
 				if (action === "bind") {
 					// When action is bind.
-					result = await service.BindEVSE({ location_id, evse_uid });
+					result = await service.BindEVSE({
+						location_id,
+						evse_uid,
+						admin_id: req.id,
+					});
 				} else {
 					// When action is unbind.
-					result = await service.UnbindEVSE({ location_id, evse_uid });
+					result = await service.UnbindEVSE({
+						location_id,
+						evse_uid,
+						admin_id: req.id,
+					});
 				}
 
 				logger.info({
@@ -282,6 +293,58 @@ module.exports = (app) => {
 					.json({ status: 200, data: result, message: "Success" });
 			} catch (err) {
 				req.error_name = "GET_DEFAULT_DATA_ERROR";
+				next(err);
+			}
+		}
+	);
+
+	app.get(
+		"/admin_evses/api/v1/evses/search/:serial_number/:limit/:offset",
+		[
+			tokenMiddleware.AccessTokenVerifier(),
+			roleMiddleware.CheckRole(
+				ROLES.ADMIN,
+				ROLES.ADMIN_NOC,
+				ROLES.ADMIN_MARKETING
+			),
+		],
+
+		/**
+		 * @param {import('express').Request} req
+		 * @param {import('express').Response} res
+		 */
+		async (req, res, next) => {
+			try {
+				const { serial_number, limit, offset } = req.params;
+
+				logger.info({
+					SEARCH_EVSE_BY_SERIAL_NUMBER_REQUEST: {
+						data: {
+							serial_number,
+							limit,
+							offset,
+						},
+						message: "SUCCESS",
+					},
+				});
+
+				const result = await service.SearchEVSEBySerialNumber(
+					serial_number,
+					limit,
+					offset
+				);
+
+				logger.info({
+					SEARCH_EVSE_BY_SERIAL_NUMBER_RESPONSE: {
+						message: "SUCCESS",
+					},
+				});
+
+				return res
+					.status(200)
+					.json({ status: 200, data: result, message: "Success" });
+			} catch (err) {
+				req.error_name = "SEARCH_EVSE_BY_SERIAL_NUMBER_ERROR";
 				next(err);
 			}
 		}

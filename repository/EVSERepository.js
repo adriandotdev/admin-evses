@@ -155,4 +155,56 @@ module.exports = class EVSERepository {
 			});
 		});
 	}
+
+	SearchEVSEBySerialNumber(serialNumber, limit, offset) {
+		const QUERY = `
+			SELECT 
+				uid,
+				evse_code,
+				evse_id,
+				model,
+				vendor,
+				serial_number,
+				box_serial_number,
+				firmware_version,
+				iccid,
+				imsi,
+				cpo_location_id
+			FROM evse
+			WHERE LOWER(serial_number) LIKE ?
+			LIMIT ${limit} OFFSET ${offset}
+		`;
+
+		const PATTERN = `%${serialNumber}%`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, [`%${serialNumber}%`], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
+
+	AuditTrail({ admin_id, cpo_id, action, remarks }) {
+		const QUERY = `
+			INSERT INTO 
+				admin_audit_trails (admin_id, cpo_id, action, remarks, date_created, date_modified)
+			VALUES (
+				?,?,?,?,NOW(),NOW()
+			)
+		`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, [admin_id, cpo_id, action, remarks], (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
 };
