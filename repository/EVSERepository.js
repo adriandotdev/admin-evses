@@ -14,6 +14,8 @@ module.exports = class EVSERepository {
                 firmware_version,
                 iccid,
                 imsi,
+				meter_serial_number,
+				status,
                 cpo_location_id
             FROM evse
 			ORDER BY cpo_location_id IS NULL, cpo_location_id ASC
@@ -170,6 +172,8 @@ module.exports = class EVSERepository {
 				firmware_version,
 				iccid,
 				imsi,
+				meter_serial_number,
+				status,
 				cpo_location_id
 			FROM evse
 			WHERE LOWER(serial_number) LIKE ?
