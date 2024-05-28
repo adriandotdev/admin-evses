@@ -1,11 +1,11 @@
+// Repositories
 const ConnectorRepository = require("../repository/ConnectorRepository");
 const EVSERepository = require("../repository/EVSERepository");
-const {
-	HttpBadRequest,
-	HttpInternalServerError,
-} = require("../utils/HttpError");
 
+// Utils
+const { HttpBadRequest } = require("../utils/HttpError");
 const { v4: uuidv4 } = require("uuid");
+
 module.exports = class EVSEService {
 	#evseRepository;
 	#connectorRepository;
@@ -15,6 +15,17 @@ module.exports = class EVSEService {
 		this.#connectorRepository = new ConnectorRepository();
 	}
 
+	/**
+	 * Retrieves EVSE (Electric Vehicle Supply Equipment) records with pagination.
+	 *
+	 * @async
+	 * @function GetEVSES
+	 * @param {Object} options - Options object containing limit and offset.
+	 * @param {number} options.limit - The maximum number of records to retrieve.
+	 * @param {number} options.offset - The number of records to skip before starting to retrieve.
+	 * @throws {HttpBadRequest} Throws an error if the limit or offset is not a number.
+	 * @returns {Promise<Object>} The result of the EVSE retrieval operation.
+	 */
 	async GetEVSES({ limit, offset }) {
 		if (typeof limit !== "number")
 			throw new HttpBadRequest(
@@ -31,6 +42,20 @@ module.exports = class EVSEService {
 		return result;
 	}
 
+	/**
+	 * Registers a new Electric Vehicle Supply Equipment (EVSE) with the given data.
+	 *
+	 * @async
+	 * @function RegisterEVSE
+	 * @param {Object} data - The data required to register the EVSE.
+	 * @param {string} data.admin_id - The ID of the admin registering the EVSE.
+	 * @param {Array} data.connectors - An array of connectors associated with the EVSE.
+	 * @param {number} data.kwh - The kilowatt-hour capacity of the EVSE.
+	 * @param {Array<string>} data.payment_types - An array of payment types supported by the EVSE.
+	 * @param {Array<string>} data.capabilities - An array of capabilities of the EVSE.
+	 * @throws {HttpBadRequest} Throws an error if the registration status is not "SUCCESS".
+	 * @returns {Promise<string>} The status of the registration operation.
+	 */
 	async RegisterEVSE(data) {
 		let conn = null;
 
@@ -105,6 +130,18 @@ module.exports = class EVSEService {
 		}
 	}
 
+	/**
+	 * Binds an Electric Vehicle Supply Equipment (EVSE) to a specified location.
+	 *
+	 * @async
+	 * @function BindEVSE
+	 * @param {Object} data - The data required to bind the EVSE.
+	 * @param {string} data.admin_id - The ID of the admin performing the bind operation.
+	 * @param {string} data.evse_uid - The unique identifier of the EVSE.
+	 * @param {string} data.location_id - The unique identifier of the location to bind the EVSE to.
+	 * @throws {HttpBadRequest} Throws an error if the binding status is not "SUCCESS".
+	 * @returns {Promise<string>} The status of the binding operation.
+	 */
 	async BindEVSE(data) {
 		try {
 			const result = await this.#evseRepository.BindEVSE(data);
@@ -132,6 +169,18 @@ module.exports = class EVSEService {
 		}
 	}
 
+	/**
+	 * Unbinds an Electric Vehicle Supply Equipment (EVSE) from a specified location.
+	 *
+	 * @async
+	 * @function UnbindEVSE
+	 * @param {Object} data - The data required to unbind the EVSE.
+	 * @param {string} data.admin_id - The ID of the admin performing the unbind operation.
+	 * @param {string} data.evse_uid - The unique identifier of the EVSE.
+	 * @param {string} data.location_id - The unique identifier of the location to unbind the EVSE from.
+	 * @throws {HttpBadRequest} Throws an error if the unbinding status is not "SUCCESS".
+	 * @returns {Promise<string>} The status of the unbinding operation.
+	 */
 	async UnbindEVSE(data) {
 		try {
 			const result = await this.#evseRepository.UnbindEVSE(data);
@@ -158,6 +207,15 @@ module.exports = class EVSEService {
 		}
 	}
 
+	/**
+	 * Retrieves the default payment types and capabilities for EVSEs.
+	 *
+	 * @async
+	 * @function GetDefaultData
+	 * @returns {Promise<Object>} An object containing default payment types and capabilities.
+	 * @returns {Promise<Array>} returns.payment_types - An array of default payment types.
+	 * @returns {Promise<Array>} returns.capabilities - An array of default capabilities.
+	 */
 	async GetDefaultData() {
 		const payment_types = await this.#evseRepository.GetDefaultPaymentTypes();
 
@@ -166,6 +224,16 @@ module.exports = class EVSEService {
 		return { payment_types, capabilities };
 	}
 
+	/**
+	 * Searches for Electric Vehicle Supply Equipment (EVSE) records by serial number with pagination.
+	 *
+	 * @async
+	 * @function SearchEVSEBySerialNumber
+	 * @param {string} serialNumber - The serial number of the EVSE to search for.
+	 * @param {number} limit - The maximum number of records to retrieve.
+	 * @param {number} offset - The number of records to skip before starting to retrieve.
+	 * @returns {Promise<Object>} The result of the EVSE search operation.
+	 */
 	async SearchEVSEBySerialNumber(serialNumber, limit, offset) {
 		const result = await this.#evseRepository.SearchEVSEBySerialNumber(
 			serialNumber,
