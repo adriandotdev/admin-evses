@@ -1,19 +1,20 @@
+// Service
+const EVSEService = require("../services/EVSEService");
+
+// Middleware
 const TokenMiddleware = require("../middlewares/TokenMiddleware");
 const {
 	ROLES,
 	RoleManagementMiddleware,
 } = require("../middlewares/RoleManagementMiddleware");
-const { validationResult, body } = require("express-validator");
 
-const logger = require("../config/winston");
-const EVSEService = require("../services/EVSEService");
-
+// Utils
 const {
 	HttpUnprocessableEntity,
 	HttpBadRequest,
 } = require("../utils/HttpError");
-// Import your SERVICE HERE
-// Import MISC HERE
+const logger = require("../config/winston");
+const { validationResult, body } = require("express-validator");
 
 /**
  * @param {import('express').Express} app
@@ -44,6 +45,7 @@ module.exports = (app) => {
 		}
 	}
 
+	// API for retrieving list of EVSEs
 	app.get(
 		"/admin_evses/api/v1/evses",
 		[
@@ -87,6 +89,7 @@ module.exports = (app) => {
 		}
 	);
 
+	// API for registering new EVSE
 	app.post(
 		"/admin_evses/api/v1/evses",
 		[
@@ -200,6 +203,7 @@ module.exports = (app) => {
 		}
 	);
 
+	// API for binding or undbinding EVSE based on its evse_uid.
 	app.patch(
 		"/admin_evses/api/v1/evses/:action/:location_id/:evse_uid",
 		[
@@ -270,6 +274,7 @@ module.exports = (app) => {
 		}
 	);
 
+	// API for retrieving list of default data for registering EVSEs
 	app.get(
 		"/admin_evses/api/v1/evses/data/defaults",
 		[tokenMiddleware.BasicTokenVerifier()],
@@ -298,6 +303,7 @@ module.exports = (app) => {
 		}
 	);
 
+	// API for searching EVSE based on serial number.
 	app.get(
 		"/admin_evses/api/v1/evses/search/:serial_number/:limit/:offset",
 		[
@@ -350,6 +356,7 @@ module.exports = (app) => {
 		}
 	);
 
+	// Error handler
 	app.use((err, req, res, next) => {
 		logger.error({
 			API_REQUEST_ERROR: {
