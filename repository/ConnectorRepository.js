@@ -2,8 +2,20 @@ const mysql = require("../database/mysql");
 
 module.exports = class ConnectorRepository {
 	/**
-	 * @param {Object} data
-	 * @param {import('mysql2').Connection} connection
+	 * Adds connectors to an Electric Vehicle Supply Equipment (EVSE).
+	 *
+	 * @function AddConnector
+	 * @param {string} uid - The unique identifier of the EVSE.
+	 * @param {Array<Object>} data - An array of connector data objects.
+	 * @param {string} data[].standard - The standard of the connector.
+	 * @param {string} data[].format - The format of the connector.
+	 * @param {number} data[].power_type - The power type ID of the connector.
+	 * @param {number} data[].max_voltage - The maximum voltage of the connector.
+	 * @param {number} data[].max_amperage - The maximum amperage of the connector.
+	 * @param {number} data[].max_electric_power - The maximum electric power of the connector.
+	 * @param {number} data[].rate_setting - The rate setting of the connector in KW-H.
+	 * @param {Object} connection - The database connection object.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database insert operation.
 	 */
 	AddConnector(uid, data, connection) {
 		const QUERY = `
@@ -52,13 +64,25 @@ module.exports = class ConnectorRepository {
 		});
 	}
 
+	/**
+	 * Adds timeslots for connectors of an Electric Vehicle Supply Equipment (EVSE) based on kWh.
+	 *
+	 * @function AddTimeslots
+	 * @param {string} uid - The unique identifier of the EVSE.
+	 * @param {number} lastInsertID - The last inserted ID from the `evse_timeslots` table.
+	 * @param {number} kwh - The kilowatt-hour setting for the EVSE.
+	 * @param {number} connectorsCount - The number of connectors.
+	 * @param {Object} connection - The database connection object.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database insert operation.
+	 */
 	AddTimeslots(uid, lastInsertID, kwh, connectorsCount, connection) {
 		/**
-		 * @function
-		 * @description A function to generate list of timeslots for each connector
-		 * @param {Object[]} connectorIDs List of connectors
-		 * @param {Number} startingID Starting index from the evse_timeslots table
-		 * @param {Number} endingID Ending index from the evse_timeslots table
+		 * Generates a list of timeslots for each connector.
+		 *
+		 * @function GenerateTimeslots
+		 * @param {Object[]} connectorIDs - List of connector IDs.
+		 * @param {number} startingID - Starting index from the `evse_timeslots` table.
+		 * @param {number} endingID - Ending index from the `evse_timeslots` table.
 		 */
 		function GenerateTimeslots(connectorIDs, startingID, endingID) {
 			for (let connectorID of connectorIDs) {

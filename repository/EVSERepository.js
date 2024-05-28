@@ -101,6 +101,15 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Binds an Electric Vehicle Supply Equipment (EVSE) to a location.
+	 *
+	 * @function BindEVSE
+	 * @param {Object} data - Data required to bind the EVSE.
+	 * @param {string} data.location_id - The ID of the location to bind the EVSE to.
+	 * @param {string} data.evse_uid - The unique identifier of the EVSE to bind.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the bind operation.
+	 */
 	BindEVSE(data) {
 		const QUERY = `CALL WEB_ADMIN_BIND_EVSE(?,?)`;
 
@@ -115,6 +124,15 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Unbinds an Electric Vehicle Supply Equipment (EVSE) from a location.
+	 *
+	 * @function UnbindEVSE
+	 * @param {Object} data - Data required to unbind the EVSE.
+	 * @param {string} data.location_id - The ID of the location from which to unbind the EVSE.
+	 * @param {string} data.evse_uid - The unique identifier of the EVSE to unbind.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the unbind operation.
+	 */
 	UnbindEVSE(data) {
 		const QUERY = `CALL WEB_ADMIN_UNBIND_EVSE(?,?)`;
 
@@ -129,6 +147,14 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Adds payment types to an Electric Vehicle Supply Equipment (EVSE).
+	 *
+	 * @function AddEVSEPaymentTypes
+	 * @param {Array<Array<string>>} paymentTypes - The payment types to add, each represented as an array [evse_uid, payment_type_id].
+	 * @param {Object} connection - The database connection object.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database insert operation.
+	 */
 	AddEVSEPaymentTypes(paymentTypes, connection) {
 		const QUERY = `INSERT INTO evse_payment_types (evse_uid, payment_type_id)
 		VALUES ?`;
@@ -144,6 +170,14 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Adds capabilities to an Electric Vehicle Supply Equipment (EVSE).
+	 *
+	 * @function AddEVSECapabilities
+	 * @param {Array<Array<string>>} capabilities - The capabilities to add, each represented as an array [capability_id, evse_uid].
+	 * @param {Object} connection - The database connection object.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database insert operation.
+	 */
 	AddEVSECapabilities(capabilities, connection) {
 		const QUERY = `INSERT INTO evse_capabilities (capability_id, evse_uid) VALUES ?`;
 
@@ -158,6 +192,12 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Retrieves default payment types from the database.
+	 *
+	 * @function GetDefaultPaymentTypes
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database query, containing default payment types.
+	 */
 	GetDefaultPaymentTypes() {
 		const QUERY = `SELECT * FROM payment_types`;
 
@@ -172,6 +212,12 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Retrieves default capabilities from the database.
+	 *
+	 * @function GetDefaultCapabilities
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database query, containing default capabilities.
+	 */
 	GetDefaultCapabilities() {
 		const QUERY = `SELECT * FROM capabilities`;
 
@@ -186,6 +232,15 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Searches for Electric Vehicle Supply Equipment (EVSE) by serial number.
+	 *
+	 * @function SearchEVSEBySerialNumber
+	 * @param {string} serialNumber - The serial number to search for.
+	 * @param {number} limit - The maximum number of results to return.
+	 * @param {number} offset - The number of results to skip before starting to return data.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database query, containing EVSE information matching the serial number search.
+	 */
 	SearchEVSEBySerialNumber(serialNumber, limit, offset) {
 		const QUERY = `
 			SELECT 
@@ -220,6 +275,16 @@ module.exports = class EVSERepository {
 		});
 	}
 
+	/**
+	 * Logs an audit trail entry.
+	 *
+	 * @function AuditTrail
+	 * @param {string} admin_id - The ID of the admin performing the action.
+	 * @param {string} cpo_id - The ID of the Charging Point Operator (CPO), if applicable.
+	 * @param {string} action - The action performed.
+	 * @param {string} remarks - Additional remarks about the action.
+	 * @returns {Promise<Object>} A promise that resolves to the result of the database insert operation, representing the audit trail entry.
+	 */
 	AuditTrail({ admin_id, cpo_id, action, remarks }) {
 		const QUERY = `
 			INSERT INTO 
