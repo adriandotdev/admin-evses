@@ -37,9 +37,16 @@ module.exports = class EVSEService {
 				"Invalid offset. Offset must be in type of number"
 			);
 
+		const totalEVSEsInDB = await this.#evseRepository.CountEVSES();
 		const result = await this.#evseRepository.GetEVSES({ limit, offset });
 
-		return result;
+		return {
+			evses: result,
+			total_evses_returned: result.length,
+			total_evses: totalEVSEsInDB[0].total_evses,
+			limit,
+			offset,
+		};
 	}
 
 	/**

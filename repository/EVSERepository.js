@@ -1,6 +1,24 @@
 const mysql = require("../database/mysql");
 
 module.exports = class EVSERepository {
+	CountEVSES() {
+		const QUERY = `
+			SELECT
+				COUNT(*) AS total_evses
+			FROM 
+				evse 
+		`;
+
+		return new Promise((resolve, reject) => {
+			mysql.query(QUERY, (err, result) => {
+				if (err) {
+					reject(err);
+				}
+
+				resolve(result);
+			});
+		});
+	}
 	/**
 	 * Retrieves a paginated list of Electric Vehicle Supply Equipment (EVSE) records.
 	 *
